@@ -1,0 +1,187 @@
+
+{% extends 'home/base.html' %}
+
+
+
+{% block title %}
+	<title>Todo - Home</title>
+{% endblock title %}
+
+
+
+
+{% block content %}	
+
+<!-- Script for the tooltip -->
+    <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip({delay:{show:400,hide:100}});
+      });
+    </script>
+
+
+  <!-- Features -->
+
+  <section id="task">
+
+      <div class="container task-container" style="background:#fff">
+        <div class="d-flex flex-column" style="position:relative;">
+
+          {% if todayTask %}
+
+            <!--Head-->
+            <div class="d-flex justify-content-between task-head">
+              <div class="d-flex flex-column">
+                <h3>{{ todayTask.taskDate|date:"l , d" }}</h3>
+                <p>{{ todayTask.taskDate|date:"F" }}</p>
+              </div>
+              <div class="d-flex flex-column">
+                <small>{{ tasks|length }} task{{ tasks|length|pluralize }}</small>
+              </div>
+            </div>
+            <!--ADD task button-->
+            <div class="add-task text-center">
+              <button class="add-task-btn" data-toggle="modal" data-target="#addaTaskModal"><i class="fa fa-plus" data-toggle="tooltip" data-placement="right" title="Add a Task"></i></button>
+            </div>
+
+            <!--Modal for Add a Task-->
+            <div class="modal fade" id="addaTaskModal">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <div class="d-flex justify-content-between">
+                      <h5>Add a Task</h5>
+                      <button type="button" class="close" onfocus="this.style.outline='none'" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <hr>
+                    <form method="post" name="addTaskForm" action="{% url 'home:home' %}">
+                      {% csrf_token %}
+                      <div class="row mt-4">
+                        <div class="col-8">
+                          <textarea class="form-control textarea-box" name="taskDescription" rows=8 placeholder="Write Your task here......" required="True"></textarea>
+                        </div>
+                        <div class="col-4">
+                          <input type="time" name="taskTime" class="form-control">
+                          <button type="submit" name="addTaskSubmit" class="btn btn-success btn-submit w-100 mt-4" disabled>Add Task</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!--Body-->
+
+            {% if tasks %}
+              <div class="task-list mt-5">
+                <ul>
+
+                  {% for task in tasks %}
+                    <li class="task-list__li {% if task.isComplete %}task-list__li_completed{% endif %}" onclick="toggleTask(this)" data-id="{{ task.id }}">
+                      <div class="row">
+                        <div class="col-9">
+                          <p class="task-list-text"><span>{{ task.taskDescription|capfirst|linebreaks }}</span></p>
+                        </div>
+                        <div class="col-3">
+                          <small class="float-right text-muted">{% if task.taskTime %}{{ task.taskTime }}{% else %}{% endif %}</small>
+                        </div>
+                      </div>
+                    </li>
+                  {% endfor %}
+
+                </ul>
+              </div>
+
+              <!-- Script for toggling task between complete and incomplete-->
+              <script>
+                function toggleTask(task_obj) {
+                  taskId = $(task_obj).attr('data-id');
+                  $.ajax({
+                    type:'GET',
+                    url:'{% url "home:toggle" %}',
+                    data:{
+                      'taskId':taskId
+                    },
+                    success:function(json) {
+                      if(json.successfull) {
+                        //task is toggled successfully in backend
+                        if(json.isComplete) {
+                          //task is completed
+                          $(task_obj).addClass('task-list__li_completed');
+                        }
+                        else {
+                          //task is not completed
+                          $(task_obj).removeClass('task-list__li_completed');
+                        }
+                      }
+                      else {
+                        //task toggled in backend went wrong
+                        alert("Something went wrong. Sorry for this incovenience.");
+                      }
+                    }
+                  });
+                }
+              </script>
+
+            {% else %}
+              <div class="task-list mt-5 p-3">
+                <h3 class="text-muted" style="font-family:Ubuntu">Click on <b>Add Task</b> button to add tasks to the list.</h3>
+              </div>
+            {% endif %}
+          {% else %}
+            <h3 class="text-muted m-4" style="font-family:Ubuntu">Click on <b>Create New Task</b> button to create a new Task for today</h3>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Activate the submit button when textarea is filled up -->
+      <script>
+        var textArea = document.getElementsByClassName("textarea-box")[0];
+        var submitBtn = document.getElementsByClassName("btn-submit")[0];
+
+        textArea.onkeyup = function(){ //Check whether textarea is filled or not
+          textLength = this.value.length
+          if(textLength > 0){ //Enable the button
+            submitBtn.removeAttribute('disabled')
+          }
+          else { //Disable the button
+            submitBtn.setAttribute('disabled',true)
+          }
+        }
+
+      </script>
+
+  </section>
+
+
+  {% if error_message %}
+    <!-- Error Message Modal-->
+    <div class="modal modal-fade" id="error-modal">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="d-flex justify-content-between">
+              <h5 style="font-family:Ubuntu">{{ error_message }}</h5>
+              <button type="button" class="close" onfocus="this.style.outline='none'" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $("#error-modal").modal('show');
+    </script>
+  {% endif %}
+
+
+
+
+
+{% endblock content %}

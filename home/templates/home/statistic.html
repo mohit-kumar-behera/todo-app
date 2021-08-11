@@ -1,0 +1,174 @@
+{% extends 'home/base.html' %}
+
+
+{% block title %}
+	<title>Todo - Statistic</title>
+{% endblock title %}
+
+
+{% block content %}
+
+<!-- Script for the tooltip -->
+    <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip({delay:{show:400,hide:100}});
+      });
+    </script>
+
+
+
+  <!-- Statistics -->
+  <section id="statistics">
+
+    <!-- Today Statistics and Overall Statistic -->
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-6 col-md-6 text-center mt-5">
+          <h4 style="font-family:'Montserrat'">Today's Performance</h4>
+          {% if taskCompletePercentage %}
+            <div class="progress mt-5 {% if taskCompletePercentage > 65 %}success-bg-fade success-border{% elif taskCompletePercentage >= 35 and taskCompletePercentage <= 65 %}warning-bg-fade warning-border{% else %}danger-bg-fade danger-border{% endif %}">
+              <div class="progress-complete pt-2 {% if taskCompletePercentage > 65 %}success-bg{% elif taskCompletePercentage >= 35 and taskCompletePercentage <= 65 %}warning-bg{% else %}danger-bg{% endif %}" style="width:{{ taskCompletePercentage }}%">
+                <p class="text-dark ml-1"><b>{{ taskCompletePercentage }}%</b></p>
+              </div>
+            </div>
+          {% else %}
+            <h5 class="text-center text-muted mt-4">You have not assigned any task today or you may have not completed any task yet</h5>
+          {% endif %}
+        </div>
+
+        <div class="col-lg-6 col-md-6 text-center mt-5">
+          <h4 style="font-family:'Montserrat'">Overall Performance</h4>
+          <div class="container">
+            
+            <div class="d-flex flex-column mt-4">
+
+              {% if overallTaskCompletePercent %}
+                <div class="danger-zone mx-auto overall-task-blk circle">
+                    <div class="safe-zone mx-auto my-auto text-center overall-task-complete adjust-top-left center-element circle" style="width:{{ overallTaskCompletePercent }}%;height:{{ overallTaskCompletePercent }}%">
+                        <p style="position:relative;top:50%;transform:translateY(-50%);" class="text-light font-weight-bold">{{ overallTaskCompletePercent }}%</p>
+                    </div>
+                    <div class="overall-task-margin adjust-top-left center-element crictical-margin-border circle">        
+                    </div>
+                </div>
+              {% else %}
+                <h5 class="text-center text-muted mt-4">You have not assigned any task today or you may have not completed any task yet</h5>
+              {% endif %}
+
+              <div class="row mt-3 mx-auto" style="width:83%">
+                <div class="col-4">
+                  <div class="d-flex flex-column">
+                    <div class="graph-notation mx-auto circle danger-zone"></div>
+                    <p class="ml-1">Not Done</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="d-flex flex-column">
+                    <div class="graph-notation mx-auto circle safe-zone"></div>
+                    <p class="ml-1">Done</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="d-flex flex-column ">
+                    <div class="graph-notation mx-auto circle crictical-margin-border-dark" ></div>
+                    <p class="ml-1">Margin for Success</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!--Last 6 days statistics-->
+    <div class="container w-100 p-4 mt-4 text-center">
+      <h4 class="text-center" style="font-family:'Montserrat'">Few Previous Performances</h4>
+      
+      <div class="six-day-graph-container mt-5 mx-auto p-4">
+
+        <div class="d-flex justify-content-start" style="overflow-x:auto">
+          
+          {% if PreviousFewTasks %}
+            {% for taskPerformance in PreviousFewTasks %}
+              <div class="d-flex flex-column ml-3 mr-3 align-self-end">
+                <div class="text-center w-100">{{ taskPerformance.taskPercentage }}%</div>
+                <div class="graph-bar {% if taskPerformance.taskPercentage > 65 %}success-bg {% elif taskPerformance.taskPercentage >= 35 and taskPerformance.taskPercentage <= 65 %}warning-bg{% else %}danger-bg{% endif %}" style="width:100%;height:{{ taskPerformance.taskPercentage }}px"></div>
+                <div class="w-100">{{ taskPerformance.taskDate|date:"l , d F" }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <h5 class="text-center text-muted mt-4">No Previous Performances are there to be shown</h5>
+          {% endif %}
+          
+        </div>
+        
+      </div>
+
+    </div>
+    
+  </section>
+
+
+  <!-- Last 5 Days -->
+
+  <section id="earlier-tasks" class='mt-4'>
+
+    <div class="container">
+      <h4 class="font-weight-bold text-center" style="font-family:'Montserrat';">Previous Tasks</h4>
+      <div class="row">
+        
+
+
+        {% for previousTask in  PreviousFewTasks %}
+
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            
+              <!--Head-->
+              <div class="container earlier-tasks-container" style="background:#fff">
+                <div class="d-flex justify-content-between task-head">
+                  <div class="d-flex flex-column">
+                    <h3>{{ previousTask.taskDate|date:"l , d" }}</h3>
+                    <p>{{ previousTask.taskDate|date:"F" }}</p>
+                  </div>
+                  <div class="d-flex flex-column">
+                    <small>{{ previousTask.totalTask }} task{{ previousTask.totalTask|pluralize }}</small>
+                  </div>
+                </div>
+                <!--Completed Status-->
+                <div class="task-status text-center {% if previousTask.taskPercentage > 65 %}success-bg {% elif previousTask.taskPercentage >= 35 and previousTask.taskPercentage <= 65 %}warning-bg{% else %}danger-bg{% endif %}">
+                  <span>{{ previousTask.taskPercentage }}%</span> <!-- if 100 then apply a star at ::after -->
+                </div>
+
+                  <!--Body-->
+                  <div class="task-list mt-4">
+                    <ul>
+                      {% for task in previousTask.tasklist_set.all %}
+                        <li class="task-list__li {% if task.isComplete %}task-list__li_completed{% endif %}">
+                          <div class="row">
+                            <div class="col-9">
+                              <p class="task-list-text"><span>{{ task.taskDescription|capfirst|linebreaks }}</span></p>
+                            </div>
+                            <div class="col-3">
+                              <small class="float-right text-muted">{% if task.taskTime %}{{ task.taskTime }}{% else %}{% endif %}</small>
+                            </div>
+                          </div>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+              </div>
+
+          </div>
+        {% endfor %}    
+
+      </div>
+    </div>
+    
+  </section>
+
+
+{% endblock content %}
