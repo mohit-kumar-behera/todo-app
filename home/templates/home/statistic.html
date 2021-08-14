@@ -7,16 +7,6 @@
 
 
 {% block content %}
-
-<!-- Script for the tooltip -->
-    <script>
-      $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip({delay:{show:400,hide:100}});
-      });
-    </script>
-
-
-
   <!-- Statistics -->
   <section id="statistics">
 
@@ -120,8 +110,6 @@
     <div class="container">
       <h4 class="font-weight-bold text-center" style="font-family:'Montserrat';">Previous Tasks</h4>
       <div class="row">
-        
-
 
         {% for previousTask in  PreviousFewTasks %}
 

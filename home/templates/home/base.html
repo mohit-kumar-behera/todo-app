@@ -20,7 +20,7 @@
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
-  <link rel="stylesheet" type="text/css" href="/static/home/css/style.css?{% now 'U' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}?{% now 'U' %}">
 
 </head>
 
@@ -28,22 +28,22 @@
 
   <!-- script for activated navLink -->
   <script>
-    window.onload = function(){
-      path = location.pathname;
-      path = path.replace(/\//g,'')
-      nav_link_active = document.getElementsByClassName('nav-link active');
-      nav_link = document.getElementsByClassName('nav-link');
-      if(nav_link_active.length == 1){  //This length should always be one because there can be only one active link
-        nav_link_active[0].classList.remove('active');
-      }
+    // window.onload = function(){
+    //   path = location.pathname;
+    //   path = path.replace(/\//g,'')
+    //   nav_link_active = document.getElementsByClassName('nav-link active');
+    //   nav_link = document.getElementsByClassName('nav-link');
+    //   if(nav_link_active.length == 1){  //This length should always be one because there can be only one active link
+    //     nav_link_active[0].classList.remove('active');
+    //   }
 
-      if(path == ''){
-        nav_link[0].classList.add('active');
-      }
-      else {
-        nav_link[1].classList.add('active');
-      } 
-    }
+    //   if(path == ''){
+    //     nav_link[0].classList.add('active');
+    //   }
+    //   else {
+    //     nav_link[1].classList.add('active');
+    //   } 
+    // }
   </script>
 
    <section id="navigation">
@@ -65,19 +65,14 @@
   </section>
 
 
-	{% block content %}
+	{% block content %}	{% endblock content %}
 
-
-	{% endblock content %}
-
-    <!-- Footer -->
-
+  <!-- Footer -->
   <footer id="footer" class="text-center mb-2">
-
     <small class="text-muted">© Copyright 2020 ToDo </small>
-
   </footer>
 
+  <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
 
 </body>
 </html>
