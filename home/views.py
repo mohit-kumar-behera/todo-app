@@ -1,12 +1,10 @@
-from django.shortcuts import render,get_object_or_404,redirect
-from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
-from django.utils import timezone
+from django.shortcuts import render
+from django.http import HttpResponseRedirect,JsonResponse
 from django.urls import reverse
 from .models import taskCreate,taskList
 import datetime
-import math
 
-from .MyClass import prevStatistics as PS
+from home.MyClass import prevStatistics as PS
 
 def home(request):
 	try:
@@ -87,14 +85,3 @@ def statistics(request):
 	context['todayTask'] = todayTask
 	context['taskCompletePercentage'] = taskCompletePercentage
 	return render(request,'home/statistic.html',context)
-
-
-
-'''
-Task creating and listing tasks -- finish
-apply the same in frontend -- finish
-apply the frontend to todayTaskStatus -- 
-delete the task after 24 hours
-	Logic to it:
-		taskPublishedDate > timezone.localtime() + datetime.timedelta(days=1)
-'''
